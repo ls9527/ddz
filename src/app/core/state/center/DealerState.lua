@@ -7,7 +7,23 @@ local DealerState = class("DealerState",function(centerData)
 end)
 local PlayerClass =require("app.core.Player")
 local PLAYER_NUMBER = 3
-
+local SCALE = 0.7
+function DealerState:pokeListTouchListener(event)
+dump(event)
+    if "clicked" == event.name then -- 选择一张牌
+        local x,y = event.x,event.y
+        local listView = event.listView
+--        event.item:setMargin({left=0,right=0,top=10,bottom=0});
+--        listView:removeItem(event.item)
+    elseif "began" == event.name then
+        print("began")
+    elseif "moved" == event.name then
+        print("moved")
+    elseif "ended" == event.name then
+        print("ended")
+    end
+    return true
+end
 function DealerState:ctor(centerData)
     centerData._playerArray = {}
     local playerArray = {}
@@ -27,37 +43,31 @@ function DealerState:ctor(centerData)
 
     local listView = cc.ui.UIListView.new({
         direction = cc.ui.UIScrollView.DIRECTION_HORIZONTAL,
-        alignment = cc.ui.UIListView.ALIGNMENT_VCENTER,
-        viewRect = cc.rect(0,0,display.width,POKE_HEIGHT*1.5),
+        alignment = cc.ui.UIListView.ALIGNMENT_VCENTER ,
+        viewRect = cc.rect(0,0,display.width,POKE_HEIGHT),
         bgColor = cc.c4b(200, 200, 200, 120),
     })
-    :setScale(0.8)
-    :setAnchorPoint(cc.p(0.5,0.5))
+--    :setScale(0.8)
     :setBounceable(false) --设置滚动控件是否开启回弹功能
-    :onScroll(function(event)
-        if "began" == event.name then
-            print("began")
-            return true
-        elseif "moved" == event.name then
-            print("moved")
-        elseif "ended" == event.name then
-            print("ended")
-        end
-    end)
+    :onTouch(handler(self,self.pokeListTouchListener))
     :addTo(centerData._center)
 
 
     for i=1,#cardArray,1 do
-        local content = cc.ui.UIPushButton.new("#poke"..cardArray[i]:getNumber()..".png", {scale9 = true})
+        local content = cc.ui.UIPushButton.new("#poke"..cardArray[i]:getNumber()..".png")
         content:setTouchSwallowEnabled(false)
-        content:setScale(0.8)
+        content:setScale(SCALE)
+        content:setAnchorPoint(cc.p(0.5,0.5))
         local listItem = listView:newItem(content)
-        listItem:setItemSize(50,POKE_HEIGHT,true)
+        local margin = {left=-60,right=0,top=0,bottom=0 }
+        listItem:setMargin(margin)
+        listItem:setItemSize(POKE_WIDTH*SCALE,POKE_HEIGHT*SCALE,false )
+
         listView:addItem(listItem)
     end
     print("cardArray",#cardArray)
-
     listView:reload()
+
 --    listView:refreshView()
     self._centerData._playerCardListView = listView
     self._centerData._playerArray = playerArray

@@ -29,7 +29,6 @@ function CallState:enterState(centerData)
 print(display.cy+200)
     local listView = cc.ui.UIListView.new({
         direction = cc.ui.UIScrollView.DIRECTION_HORIZONTAL,
-        alignment = cc.ui.UIListView.ALIGNMENT_VCENTER,
         viewRect = cc.rect(display.cx,display.cy+200,BTN_WIDTH * 4,BTN_HEIGHT),
     })
     :setScale(0.5)
